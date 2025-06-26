@@ -5,6 +5,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 public class PdfManager {
@@ -13,7 +14,6 @@ public class PdfManager {
 
     public static boolean generarPdf(String nombre, String modelo, String clase, String tripulacion, int numPeliculas) {
         try {
-            // Crear carpeta si no existe
             File carpeta = new File(RUTA_CARPETA);
             if (!carpeta.exists()) carpeta.mkdirs();
 
@@ -45,6 +45,35 @@ public class PdfManager {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static byte[] generarPdfComoBytes(String nombre, String modelo, String clase, String tripulacion, int numPeliculas) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            try (PDPageContentStream content = new PDPageContentStream(document, page)) {
+                content.beginText();
+                content.setFont(PDType1Font.HELVETICA, 14);
+                content.setLeading(20f);
+                content.newLineAtOffset(50, 700);
+
+                content.showText("Nombre: " + nombre); content.newLine();
+                content.showText("Modelo: " + modelo); content.newLine();
+                content.showText("Clase: " + clase); content.newLine();
+                content.showText("Tripulacion: " + tripulacion); content.newLine();
+                content.showText("Peliculas: " + numPeliculas);
+
+                content.endText();
+            }
+
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            document.save(output);
+            return output.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
         }
     }
 }
