@@ -1,0 +1,13 @@
+# Archivos compilados
+*.class
+
+# Maven
+target/
+
+# Vaadin
+node_modules/
+frontend/generated/
+
+# IntelliJ IDEA
+.idea/
+*.iml
